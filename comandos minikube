@@ -1,0 +1,16 @@
+minikube start
+minikube stop
+minikube status
+
+
+kubectl get pods
+
+___________________create pod
+
+kubectl run --generator=run-pod/v1 nombredemipodquequierocrear --image=nginx:alpine
+
+
+
+
+
+

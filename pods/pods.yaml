@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: mipoddos
+spec:
+  containers:
+  - image: nginx:alpine
+    name: contenedor1
+   
+---
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: mipodtres
+spec:
+  containers:
+  - image: nginx:alpine
+    name: contenedor2

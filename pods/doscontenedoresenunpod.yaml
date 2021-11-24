@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: doscontenedores
+spec:
+  containers:
+  - name: contenedor1
+    image: python:3.6-alpine
+    command: ['sh', '-c', 'echo contenedorUno > index.html && python -m http.server 8082'] 
+  - name: contenedor2
+    command: ['sh', '-c', 'echo contenedorDos > index.html && python -m http.server 8083'] 
+    image: python:3.6-alpine  
+    
