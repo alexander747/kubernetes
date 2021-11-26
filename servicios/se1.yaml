@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:                    #metadata del deployment
+  annotations:
+    kubernetes.io/change-cause: "se creo este primer deployment" #causa del porque se depliega este deploy esto aparecera con el comando de rollout history 
+  name: deployment-test
+  labels:
+    app: front
+spec:                        #spect del replicaset
+  revisionHistoryLimit: 3  # cuantos replicas set de history queremos
+  replicas: 3
+  selector:
+    matchLabels:
+      app: front
+  template:                  #template del pod
+    metadata:
+      labels:
+        app: front
+    spec:                   #container 
+      containers:
+      - name: nginx
+        image: nginx:alpine
+        ports:
+          - containerPort: 80
+
+---
+apiVersion: v1          #version del servicio
+kind: Service           #tipo Service
+metadata:               #metadata del service
+  name: mi-servicio
+  labels:
+    app: front
+spec:
+  type: ClusterIP       #tipo de servicio que tendra el servicio (ClusterIP solo accesible en el cluster)
+  selector:             #selector para buscar pods
+    app: front
+  ports:            
+    - protocol: TCP     #protocolo de escucha
+      port: 8080        #puerto en el que el servicio va estar escuchando
+      targetPort: 80    #puerto del pod que va a buscar a consumir 

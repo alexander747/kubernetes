@@ -1,0 +1,77 @@
+minikube start
+minikube stop
+minikube status
+
+***********************************************************IMPORTANTS**********************************************************
+kubectl get all 
+kubectl api-resources
+kubectl apply -f archivo.yaml
+kubectl api-versions 
+
+***********************************************************SERVICES**********************************************************
+kubectl get svc
+kubectl get svc -l app=algo
+kubectl describe svc nombreservicio (ver ip)
+kubectl get endpoints (ips de pods dentro de los servicios)
+
+***********************************************************DEPLOYMENTS**********************************************************
+kubectl get deployment
+kubectl get deploy
+kubectl get deploy --show-labels
+kubectl rollout status deployment nombredeldeploy
+kubectl rollout history deployment nombredeldeploy (mostrara todos los deployments que se han hecho)
+kubectl rollout history deployment nombredeldeploy --revision=2 (mostrara lo que paso en ese deploy dependiendo del numero del deploy que le pasemos a partir del history)
+
+COME BACK DEPLOYMENT
+kubectl rollout undo deployment nombredeldeploy --to-revision=3 (le pasamos el numero del deploy que obtuvimos con history)
+
+
+
+***********************************************************REPLICAS SET**********************************************************
+kubectl get pods -l app=backend 
+kubectl get rs or replicaset (de api-resources)
+kubectl describe rs nombredelreplicaset
+kubectl get rs nombredelreplicaset -o yaml
+
+
+
+***********************************************************PODS**********************************************************
+kubectl run --generator=run-pod/v1 nombredemipodquequierocrear --image=nginx:alpine
+
+kubectl run nombrepod  --image nginx:alpine (crea imagen alpine SIRVE)
+
+kubectl get pods
+
+kubectl describe pod nombrepod      (here we can see the ip pod)
+OR 
+kubectl port-forward nombrepod ponpuertocualquiera
+luego en localhost con ese puerto
+
+kubectl get pod nombrepod -o yaml
+
+kubectl logs nombrepod -f 
+
+kubectl delete -f nombrearchivo.yaml
+kubectl delete pod nombrepod
+
+FILTRAR POR LABELS 
+kubectl get pods -l app=algo
+
+INGRESAR A POD
+kubectl exec -ti nombrepod -- sh
+
+kubectl exec -ti nombrepod -c nombrecontenedor
+
+PUT LABEL TO CONSOLE
+kubectl label pods nombrepod new-label=algo
+
+VER MAS INFO DEL POD
+kubectl get pods -l app=algo -o wide
+
+CREAR POD TEMPORAL 
+kubectl run --rm -ti nombrepod  --image nginx:alpine -- sh
+
+
+
+
+

@@ -1,0 +1,19 @@
+apiVersion: apps/v1         #apps porque en el kubectl get-resources el apigroup es apps
+kind: ReplicaSet            #porque en el kubectl get-resources el kind es ese
+metadata:
+  name: rs-test             #nombre del replica set
+  labels:                   #labels del replicaset clave valor para tambien hacer filtros (kubectl get rs -l app=rs-test)
+    app: rs-test 
+spec:                       #que se espera del replica set        
+  replicas: 3               #cantidad de replicas de un pod a hacer
+  selector:                 #seleccionador de los pods para hacer las replicas 
+    matchLabels:            #pods a buscar por labels
+      app: pod-label        #match que debe hacer los pods a buscar clave valor por labels 
+  template:                 #ESTO YA PERTENECE AL POD DE AQUI PARA ABAJO template para los pods
+    metadata:               #metadata del pod
+      labels:
+        app: pod-label      #poner el mismo label que se busca en el selector por si no lo encuentra cree este
+    spec:                   #que se espera del pod
+      containers:           #contenderos del pod
+      - name: container1    #nombre del contenedor 
+        image: nginx:alpine #imagen del contenedor
