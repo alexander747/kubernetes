@@ -19,6 +19,7 @@ spec:                        #spect del replicaset
     spec:                   #container 
       containers:
       - name: nginx
+        imagePullPolicy: IfNotPresent #busca en la imagenes locales primero si no la descarga 
         image: nginx:alpine
         ports:
           - containerPort: 80
