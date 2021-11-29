@@ -1,0 +1,30 @@
+#------------------------------LOS LimitRange operan solo en los objetos de tipo Namespace por eso creamos el Namespace aqui
+#si un pod no tiene definido los limites de cpu y ram se le aplicaran los limitRange que tenga ese namespace asignado
+
+#kubectl get limitrange -n nombreNamesPace
+#kubectl describe limitrange nombreLimite -n nombreNamesPace
+
+#namespace
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: dev
+  labels:
+    name: dev
+
+---
+#limitrange
+apiVersion: v1
+kind: LimitRange
+metadata:
+  name: limite-mem-cpu
+  namespace: dev      #este  limitRange solo va a afectar a los objetos de tipo namespace dev (osea linea 6)
+spec:                 #lo que se espera que haga el limitrange
+  limits:             
+  - default:          #tendra una ram de una giga maximo con 512 maximo
+      memory: 512Mi
+      cpu: 1
+    defaultRequest:   #por defecto tendra garantizada media 256 de memoria y media cpu 
+      memory: 256Mi
+      cpu: 0.5
+    type: Container

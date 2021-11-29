@@ -1,0 +1,20 @@
+#kubectl get nodes
+#kubectl describe node minikube   (nos muestra la cpu y memoria que tiene nuestra maquina)
+#
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: cpu-demo
+spec:
+  containers:
+    - name: cpu-demo
+      image: vish/stress
+      resources:            #RECURSOS DE CPU
+        limits:             #si se pasa del request va a limit que es lo maximo que puede llegar a tener. 1 cpu es igual a 1000m (milicors)
+          cpu: "100"        #PEDIMOS 100 CPU Y ESTO ES MUCHA ASI QUE NO VA A ENCONTRAR UNA MAQUINA CON ESTA ESPECIFICACION ASI QUE ESTARA EN ESTADO PENDING
+        request:            #memoria dedicada que va a tener el pod
+          cpu: "500m"       #media cpu
+      args:                 #LE PEDIMOS DOS CPUS PERO SOLO NOS DARA UNA CPU PORQUE ESO LE PEDIMOS EN LIMITS
+      - -cpus
+      - "2"

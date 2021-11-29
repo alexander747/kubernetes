@@ -1,0 +1,29 @@
+#------------------------------LOS LimitRange operan solo en los objetos de tipo Namespace por eso creamos el Namespace aqui
+#aqui esta el minimo y max que pueden tener
+#kubectl get limitrange -n nombreNamesPace
+#kubectl describe limitrange nombreLimite -n nombreNamesPace
+
+#namespace
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: prod
+  labels:
+    name: prod
+
+---
+#limitrange
+apiVersion: v1
+kind: LimitRange
+metadata:
+  name: minimo_maximo
+  namespace: pro      #este  limitRange solo va a afectar a los objetos de tipo namespace dev 
+spec:                 #lo que se espera que haga el limitrange
+  limits:             #limites
+  - max:         
+      memory: 1Gi     #maximo una giga de memoria para todos los contenedores 
+      cpu: 1          #maximo una cpu
+    min:
+      memory: 100M    #minimo 100 megas
+      cpu: 100m       #ninimo 100 minicors de cpu
+    type: Container

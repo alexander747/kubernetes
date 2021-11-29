@@ -1,0 +1,17 @@
+#este pod no se creara porque al final le estamos pidiendo 250 m de ram y solo tiene un maximo de 200, se va a reiciar varias veces
+#kubectl get pods --watch en status aparecera el error OOMKilled que significa que el contenedor esta utilizando mas memoria ram del asignado 
+apiVersion: v1
+kind: Pod
+metadata:
+  name: memory-demo
+spec:
+  containers:
+    - name: memory-demo
+      image: polinux/stress
+      resources:
+        limits:             #si se pasa del request va a limit que es lo maximo que puede llegar a tener pero esto no es dedicada por todo el tiempo (RAM)
+          memory: "200Mi"   #no va a poder consumir mas de 200 megas  
+        request:            #memoria dedicada que va a tener el pod
+          memory: "100Mi"   # 100 megas
+      command: ["stress"]
+      args: ["--vm", "1", "--vm-bytes", "250M", "--vm-hang", "1"]    

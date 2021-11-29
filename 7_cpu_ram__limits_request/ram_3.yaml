@@ -1,0 +1,18 @@
+#En este caso asignamos mas recursos que con el que contamos en el kubernete
+#kubectl get pods --watch en status aparecera pending ya que no encontrara nodos donde ponerlo con estos recursos 
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: memory-demo
+spec:
+  containers:
+    - name: memory-demo
+      image: polinux/stress
+      resources:
+        limits:             #si se pasa del request va a limit que es lo maximo que puede llegar a tener pero esto no es dedicada por todo el tiempo (RAM)
+          memory: "1000Gi"   #no va a poder consumir mas de 1000 GIGAS de ram  (1000 )
+        request:            #memoria dedicada que va a tener el pod
+          memory: "1000Gi"   # 100 megas
+      command: ["stress"]
+      args: ["--vm", "1", "--vm-bytes", "250M", "--vm-hang", "1"]    

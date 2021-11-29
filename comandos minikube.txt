@@ -8,9 +8,20 @@ kubectl api-resources
 kubectl apply -f archivo.yaml
 kubectl api-versions 
 
+***********************************************************LIMITS RESOURCES QUOTA**********************************************************
+afectan a todo a nivel de namespace, suma los limits range y mira si eso esta aceptado para ese namespace. este ayuda al limit range a contralar los recursos
+
+***********************************************************LIMITS RANGE DEFAULT**********************************************************
+los limits range afectan al pod individualmente o lo que es lo mismo a nivel de objeto
+#si un pod no tiene definido los limites de cpu y ram se le aplicaran los limitRange que tenga ese namespace asignado
+#podemos ver con kubectl get limitrange -n dev (dev nombre del namespace)
+kubectl get limitrange -n nombreNamesPace              (obtiene los limits creados)
+kubectl describe limitrange nombreLimite -n nombreNamesPace (vemos los recursos de un limitrange en especifico)
 
 ***********************************************************NAMESPACES**********************************************************
 kubectl get namespaces
+kubectl get ns
+
 kubectl get namespaces --show-labels
 kubectl get all -n nombreNamespace (trae todo lo creado dentro de este namespace)
 kubectl get pods -n nombreNamespace
