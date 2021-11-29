@@ -2,39 +2,39 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:                        #metadata del deployment
   annotations:
-    kubernetes.io/change-cause: "Deploy de app backend" #causa del porque se depliega este deploy esto aparecera con el comando de rollout history 
-  name: deployment-backend
+    kubernetes.io/change-cause: "Deploy de app frontend" #causa del porque se depliega este deploy esto aparecera con el comando de rollout history 
+  name: deployment-frontend
   labels:
-    app: backend
+    app: frontend
 spec:                           #spect del replicaset
   revisionHistoryLimit: 3       # cuantos replicas set de history queremos
   replicas: 3
   selector:
     matchLabels:
-      app: backend
+      app: frontend
   template:                     #template del pod
     metadata:
       labels:
-        app: backend
+        app: frontend
     spec:                       #container 
       containers:
-      - name: backend
+      - name: frontend
         imagePullPolicy: IfNotPresent #busca en la imagenes locales primero si no la descarga 
-        image: ricardoandre97/backend-k8s-hands-on:v2
+        image: ricardoandre97/frontend-k8s-hands-on:v1 
       
 
 ---
 apiVersion: v1                  #version del servicio
 kind: Service                   #tipo Service
 metadata:                       #metadata del service
-  name: deployment-backend
+  name: deployment-frontend
   labels:
-    app: backend
+    app: frontend
 spec:
-  type: ClusterIP       
+  type: NodePort       
   selector:                     #selector para buscar pods
-    app: backend
+    app: frontend
   ports:            
     - protocol: TCP             #protocolo de escucha
       port: 80                  #puerto en el que el servicio va estar escuchando
-      targetPort: 9090          #puerto del pod que va a buscar a consumir 
+      targetPort: 80            #puerto del pod que va a buscar a consumir 

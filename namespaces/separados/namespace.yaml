@@ -1,0 +1,50 @@
+apiVersion: v1
+kind: Namespace
+metadata:                    #metadata 
+  metadata:
+    name: ci
+    labels:
+      app: ci
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend-k8s-hands-on
+  namespace: ci             #NOMBRE A QUE NAMESPACE VA A IR ------------------------------------
+  labels:
+    app: backend
+spec:                        #spect del replicaset
+  revisionHistoryLimit: 3  # cuantos replicas set de history queremos
+  replicas: 3
+  selector:
+    matchLabels:
+      app: backend
+  template:                  #template del pod
+    metadata:
+      labels:
+        app: backend
+    spec:                   #container 
+      containers:
+      - name: nginx
+        imagePullPolicy: IfNotPresent #busca en la imagenes locales primero si no la descarga 
+        image: nginx:alpine
+        ports:
+          - containerPort: 80
+
+---
+apiVersion: v1          #version del servicio
+kind: Service           #tipo Service
+metadata:               #metadata del service
+  name: backend-k8s-hands-on
+  namespace: ci         #NOMBRE A QUE NAMESPACE VA A IR ------------------------------------
+  labels:
+    app: backend
+spec:
+  type: ClusterIP       #tipo de servicio que tendra el servicio (ClusterIP solo accesible en el cluster)
+  selector:             #selector para buscar pods
+    app: backend
+  ports:            
+    - protocol: TCP     #protocolo de escucha
+      port: 8080        #puerto en el que el servicio va estar escuchando
+      targetPort: 80    #puerto del pod que va a buscar a consumir 

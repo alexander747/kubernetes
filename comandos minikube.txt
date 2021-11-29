@@ -8,6 +8,17 @@ kubectl api-resources
 kubectl apply -f archivo.yaml
 kubectl api-versions 
 
+
+***********************************************************NAMESPACES**********************************************************
+kubectl get namespaces
+kubectl get namespaces --show-labels
+kubectl get all -n nombreNamespace (trae todo lo creado dentro de este namespace)
+kubectl get pods -n nombreNamespace
+
+acceder a dns en diferentes namespaces
+nombreDelServicioNuestro.nombreDelNamespaceNuestro.svc.cluster.local
+
+
 ***********************************************************SERVICES**********************************************************
 kubectl get svc
 kubectl get svc -l app=algo

@@ -1,0 +1,72 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: dev
+  labels:
+    name: dev
+
+---
+
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: prod
+  labels:
+    name: prod
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:                    
+  annotations:
+    kubernetes.io/change-cause: "se creo este primer deployment" #causa del porque se depliega este deploy esto aparecera con el comando de rollout history 
+  name: deployment-test
+  namespace: dev             #NOMBRE A QUE NAMESPACE VA A IR ------------------------------------
+  labels:
+    app: front
+spec:                        #spect del replicaset
+  revisionHistoryLimit: 3  # cuantos replicas set de history queremos
+  replicas: 1
+  selector:
+    matchLabels:
+      app: front
+  template:                  #template del pod
+    metadata:
+      labels:
+        app: front
+    spec:                   #container 
+      containers:
+      - name: nginx
+        imagePullPolicy: IfNotPresent #busca en la imagenes locales primero si no la descarga 
+        image: nginx:alpine
+        ports:
+          - containerPort: 8080
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:                    
+  annotations:
+    kubernetes.io/change-cause: "se creo este primer deployment" #causa del porque se depliega este deploy esto aparecera con el comando de rollout history 
+  name: deployment-pro
+  namespace: dev             #NOMBRE A QUE NAMESPACE VA A IR ------------------------------------
+  labels:
+    app: kack
+spec:                        #spect del replicaset
+  revisionHistoryLimit: 3  # cuantos replicas set de history queremos
+  replicas: 3
+  selector:
+    matchLabels:
+      app: front
+  template:                  #template del pod
+    metadata:
+      labels:
+        app: front
+    spec:                   #container 
+      containers:
+      - name: nginx
+        imagePullPolicy: IfNotPresent #busca en la imagenes locales primero si no la descarga 
+        image: nginx:alpine
+        ports:
+          - containerPort: 8080
+            
