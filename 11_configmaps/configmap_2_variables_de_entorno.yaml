@@ -1,0 +1,47 @@
+apiVersion: v1
+kind: ConfigMap
+metadata: #metadata del configmap
+  name: variables-entorno #nombre del configmap
+  labels:
+    app: front
+data: #data del configmap
+  db_host: dev.host.local
+  db_user: dev.user
+  script: |
+    echo DB host es $DB_HOST y DB user es $DB_USER > /usr/share/nginx/test.html
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata: #metadata del deployment
+  annotations:
+    kubernetes.io/change-cause: "se creo este primer deployment" #causa del porque se depliega este deploy esto aparecera con el comando de rollout history
+  name: deployment-config-map
+  labels:
+    app: front
+spec: #spect del replicaset
+  revisionHistoryLimit: 3 # cuantos replicas set de history queremos
+  replicas: 1
+  selector: #selector que el replica set va a buscar en los pods
+    matchLabels:
+      app: front
+  template: #template del pod
+    metadata:
+      labels:
+        app: front
+    spec: #spec del container
+      containers:
+        - name: test-container #nombre del container
+          image: nginx:alpine #imagen para crear el container
+          env: #VARIABLES DE ENTORNO PARA EL POD
+            - name: DB_HOST #NOMBRE DE LA VARIABLE DE ENTORNO
+              valueFrom: #desde donde va a venir el valor de la variable de entorno
+                configMapKeyRef: # el valor va a venir desde un configmap
+                  name: variables-entorno #nombre del configmap desde donde vamos a tomar las configuraciones
+                  key: db_host #que llave del configmap vamos a tomar como valor para nuestra variable de entorno
+            - name: DB_USER
+              valueFrom:
+                configMapKeyRef: # el valor va a venir desde un configmap
+                  name: variables-entorno #nombre del configmap desde donde vamos a tomar las configuraciones
+                  key: db_user #que llave del configmap vamos a tomar como valor para nuestra variable de entorno
+

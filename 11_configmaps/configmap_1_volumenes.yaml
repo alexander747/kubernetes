@@ -1,0 +1,57 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nginx-config-1
+  labels:
+    app: front
+data:
+  test: hola #hola es una llave dentro del configmap #nginx es una llave dentro del configmap
+  nginx: server {
+    listen       8080;
+    server_name  localhost;
+
+
+    location /  {
+    root    /usr/share/nginx/html;
+    index index.html index.htm;
+    }
+
+    error_page 500 502 403 504 /50x.html;
+    location = /50x.html {
+    root      /usr/share/nginx/html;
+    }
+    }
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata: #metadata del deployment
+  annotations:
+    kubernetes.io/change-cause: "se creo este primer deployment" #causa del porque se depliega este deploy esto aparecera con el comando de rollout history
+  name: deployment-config-map
+  labels:
+    app: front
+spec: #spect del replicaset
+  revisionHistoryLimit: 3 # cuantos replicas set de history queremos
+  replicas: 1
+  selector: #selector que el replica set va a buscar en los pods
+    matchLabels:
+      app: front
+  template: #template del pod
+    metadata:
+      labels:
+        app: front
+    spec: #spec del container
+      containers:
+        - name: test-container #nombre del container
+          image: nginx:alpine #imagen para crear el container
+          volumeMounts: #que volumenes vamos a montar dentro del contenedor
+            - name: nginx-vol #nombre que queramos
+              mountPath: /etc/nginx/conf.d #en que ruta(carpeta) del contenedor vamos a meter la configuracion
+    volumes: #seccion de volumenes
+      - name: nginx-vol #este nombre debe ser el mismo nombre que le dimos a volumeMounts
+        configMap: #seccion del configmap
+          name: nginx-config-1 #le pasamos el nombre del configmap que creamos arriba
+          items: #son las llaves que estan dentro del configmap esto lo podemos ver haciendo un describe al configmap
+            - key: nginx #nginx es la llave que esta definida dentro del configmap que hicimos arriba
+              path: default.conf #es el nombre que va a tener una vez montemos la configuracion en el pod

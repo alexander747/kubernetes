@@ -8,15 +8,56 @@ kubectl api-resources
 kubectl apply -f archivo.yaml
 kubectl api-versions 
 
+***********************************************************SECRETS**********************************************************
+son similares a los configmaps solo que estos no revelan la informacion que poseen 
+
+para crear un secret desde la terminal
+generic : es un comando de crear un secret mas usado 
+
+kubectl create secret generic NOMBRE_QUE_QUERAMOS_PARA_SECRETO --from-file=RUTA_DEL_ARCHIVO_CONFIGURACION
+kubectl create secret generic secretouno --from-file=12_secrets/secrets_files/secret.txt
+
+kubectl get secrets
+kubectl describe secrets nombredelsecreto (no mostrara el contenido por razones de seguridad)
+kubectl get secrets nombresecreto -o yaml    (va a mostrar los secretos pero codificados en base64)
+    echo codigobase64 | base64 --decode  (esto nos mostrara ya nuestros secretos)
+
+
+***********************************************************CONFIGMAPS**********************************************************
+objeto que vive en un namespace, es llave valor. se pueden crear o cargar desde un archivo y la otra manera es a travez de un manifiesto configmap(es mejor) y el pod lo puede acceder a travez de variables de entorno o la segunda manera es a travez de volumen 
+
+para crear desde la linea de comandos:
+kubectl create configmap NOMBRE_QUE_QUERAMOS_PARA_CONFIGMAP --from-file=RUTA_DEL_ARCHIVO_CONFIGURACION
+kubectl create configmap nginx-config --from-file=11_configmaps/configmap/nginx.conf   (si no le pasamos el archivo final va a crear un configmap con todos los archivos que contenga la carpeta llave valor)
+
+kubectl get configmap
+kubectl get cm
+kubectl describe cm nombredelconfigmap
+
+kubectl delete cm nombreconfigmap
+
+
+
+***********************************************************HEALTH**********************************************************
+FALTA
+
 ***********************************************************LIMITS RESOURCES QUOTA**********************************************************
 afectan a todo a nivel de namespace, suma los limits range y mira si eso esta aceptado para ese namespace. este ayuda al limit range a contralar los recursos
+kubectl get resourcequotas 
+kubectl describe resourcequotas 
+
+kubectl describe ns (aqui se ve los recursos del namespace)
 
 ***********************************************************LIMITS RANGE DEFAULT**********************************************************
-los limits range afectan al pod individualmente o lo que es lo mismo a nivel de objeto
+los limits range afectan al pod individualmente o lo que es lo mismo a nivel de objeto cuando en el pod no especificamos en resources los limites de limits and request
 #si un pod no tiene definido los limites de cpu y ram se le aplicaran los limitRange que tenga ese namespace asignado
 #podemos ver con kubectl get limitrange -n dev (dev nombre del namespace)
 kubectl get limitrange -n nombreNamesPace              (obtiene los limits creados)
+
 kubectl describe limitrange nombreLimite -n nombreNamesPace (vemos los recursos de un limitrange en especifico)
+
+***********************************************************LIMITS AND REQUEST TO POD**********************************************************
+asigna los recursos de cpu y memoria ram cuando se crea un pod, tiene el request que es lo que se le dara dedicado y limits que sera el maximo a dar si se pasa del dedicado
 
 ***********************************************************NAMESPACES**********************************************************
 kubectl get namespaces
@@ -94,6 +135,6 @@ CREAR POD TEMPORAL
 kubectl run --rm -ti nombrepod  --image nginx:alpine -- sh
 
 
-
+kubectl get pods --watch (importante para ver cuantas veces se reinicia un pod)
 
 
