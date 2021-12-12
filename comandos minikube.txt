@@ -8,6 +8,27 @@ kubectl api-resources
 kubectl apply -f archivo.yaml
 kubectl api-versions 
 
+***********************************************************VOLUMENES**********************************************************
+ES DONDE PONEMOS ARCHIVOS O DATOS QUE QUEREMOS QUE PERSISTAN ASI EL POD MUERA ASI LO PODRA SEGUIR USANDO OTRO POD
+TIPOS DE VOLUMENES:
+
+EmptyDir: crea un directorio a nivel de pod para que el contenedor la pueda consumir. Pero si el pod muere tambien se elimina la data 
+
+HostPath: hace referencia a un path dentro del nodo donde esta corriendo pod. este depende ya de la vida del nodo y no del pod. pero tenemos tambien el mismo problema que si muere el nodo se perdera la data
+
+Cloud: recursos de hardware en la nube. pero es complicado porque tenemos que conocer las especificiones de ese hardaware y configurarlo en el pod pero para esto esta los PVC Y PV
+
+PV (PERSISTENT VOLUMEN) PVC(PERSISTENT VOLUMEN CLOUD)
+EL PVC reclama una ruta al PV para montarlo en el sistema de archivos de una imagen y el PV es el crea el recurso en la nube donde se guarda la informacion. El PVC selecciona al PV mediante selectores (labels)
+
+Reclaim policy 
+PERO QUE PASA SI SE ELIMINA EL PVC
+    RETAIN (retener)=> no se elimina el PV y por lo tanto no se eliminaran los datos de cloud, pero ya no estara disponible para el uso desde otro PVC
+    RECICLE (reciclar)=> cuando se elimina el PVC no se eliminara el PV pero si se eliminara el contenido o la data que exista en el cloud, asi el PV puede ser usado en otro PVD
+    DELETE => cuando se elimine el PVC se elimina el PV Y la data de cloud por completo
+
+kubectl get pv
+
 ***********************************************************SECRETS**********************************************************
 son similares a los configmaps solo que estos no revelan la informacion que poseen 
 
