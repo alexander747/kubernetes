@@ -28,6 +28,19 @@ PERO QUE PASA SI SE ELIMINA EL PVC
     DELETE => cuando se elimine el PVC se elimina el PV Y la data de cloud por completo
 
 kubectl get pv
+kubectl describe pv nombrepv
+
+kubectl get pvc
+kubectl describe pvc nombrepv
+
+
+EXISTEN LOS STORAGE CLASS
+si no existe un pv que esta siendo llamado desde un pvc el storage class lo crea automaticamente para provisionarselo
+kubectl get sc
+
+
+EDITAR EL TIPO DE RECLAIM POLICY DE UN PV 
+kubectl edit pv nombredelpv   (el edit lo podemos utilizar con cualquier objeto que tengamos deploy, pods...etc)
 
 ***********************************************************SECRETS**********************************************************
 son similares a los configmaps solo que estos no revelan la informacion que poseen 
@@ -62,7 +75,7 @@ kubectl delete cm nombreconfigmap
 ***********************************************************HEALTH**********************************************************
 FALTA
 
-***********************************************************LIMITS RESOURCES QUOTA**********************************************************
+***********************************************************LIMITS RESOURCES QUOTA********************************************
 afectan a todo a nivel de namespace, suma los limits range y mira si eso esta aceptado para ese namespace. este ayuda al limit range a contralar los recursos
 kubectl get resourcequotas 
 kubectl describe resourcequotas 

@@ -6,7 +6,7 @@ metadata:
     type: local
 spec:
   storageClassName: manual #el storage va hacer manual
-  capacity: #capacidad
+  capacity: #capacidad que va a tener el pv
     storage: 10Gi
   accessModes:
     - ReadWriteOnce #solo se puede utilizar una vez, dos pods o mas no pueden utilizar el volumen al mismo tiempo

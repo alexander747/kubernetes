@@ -1,0 +1,69 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: test-pv
+  labels:
+    mysql: ready
+spec:
+  storageClassName: manual #el storage va hacer manual
+  capacity: #capacidad que va a tener el pv
+    storage: 10Gi
+  accessModes:
+    - ReadWriteOnce #solo se puede utilizar una vez, dos pods o mas no pueden utilizar el volumen al mismo tiempo
+  hostPath: #donde va a estar el almacenamiento real detras del PV
+    path: "/mysql" #ruta en donde vamos a guardar nuestra data persistente (en esta parte se creara una carpeta test en nuestro cluster local)
+
+#este sera de tipo hostpath esto se puede ver descrbiendo el pv
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: test-pvc
+spec:
+  storageClassName: manual # Empty string must be explicitly set otherwise default StorageClass will be set
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi #cuando no se especifica el pv va a buscar el que cumpla con la especificacion de 10 gigas y que tenga storageClassName manual
+  selector: #si no tenemos el volumeName entonces vamos a buscar el pv por labels
+    matchLabels:
+      mysql: ready # donde le decimos que llave va a buscar y con que valor
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata: #metadata del deployment
+  annotations:
+    kubernetes.io/change-cause: "se creo este primer deployment" #causa del porque se depliega este deploy esto aparecera con el comando de rollout history
+  name: mysqli
+  labels:
+    app: mysql
+spec: #spect del replicaset
+  revisionHistoryLimit: 3 # cuantos replicas set de history queremos
+  replicas: 1
+  selector: #selector que el replica set va a buscar en los pods
+    matchLabels:
+      app: mysql
+  template: #template del pod
+    metadata:
+      labels:
+        app: mysql
+    spec: #container
+      containers:
+        - name: mysql
+          imagePullPolicy: IfNotPresent #busca en la imagenes locales primero si no la descarga
+          image: mysql:5.7
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              value: "12345678"
+          ports:
+            - containerPort: 8080
+          volumeMounts:
+            - mountPath: "/var/lib/mysql" #aqui es donde mysql guarda toda su info y en donde vamos a poner toda la data
+              name: vol-mysql #vamos a montar un volumen llamado vol-mysql que es el que esta mas abajo y que a su vez
+      volumes:
+        - name: vol-mysql
+          persistentVolumeClaim: # el PersistentVolumeClaim esta apuntando el PVC de nombre test-pvc que ya apunta a un PV
+            claimName: test-pvc
+#estamos guardando la data en el nodo esto no se debe hacer

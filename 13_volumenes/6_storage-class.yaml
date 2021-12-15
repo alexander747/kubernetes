@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: sc-pvc
+spec:
+  storageClassName: standart #como es de tipo storage class ya no es manual ahora es standart porque lo vemos con el comando kubectl get sc o se la puede eliminar y ya sabe que tiene que tomar la estandar de minikube esta dandonos
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi #en este punto no tenemos un PV que cumpla con las 10 gigas de storage asi que no va a encontrarla pero como es de tipo storageClassName standart el cluster creara el PV automaticamente y creara el almacenamiento requerido. esto es lo que mas se usa en la nube porque no se crea muy de seguido los PV a mano
