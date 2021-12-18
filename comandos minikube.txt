@@ -7,6 +7,38 @@ kubectl get all
 kubectl api-resources
 kubectl apply -f archivo.yaml
 kubectl api-versions 
+kubectl port-forward svc/front-venta -n venta-digital 8181:8080 para port forward
+
+
+
+*********************************************************** RBAC ROLES**********************************************************
+ROLE VS CLUSTERROLE
+ROLE=> Se debe especificar a que namespace va a tener acceso VERSUS CLUSTERROLE=> Va a tener acceso a todo los namespace
+
+ROLEBINDING VS CLUSTERROLEBINDING son otros archivos yaml
+ROLEBINDING Es donde referenciamos un role y un subject que es a quien(usuario) le ponemos el rol
+CLUSTERROLEBINDING es donde referenciamos un CLUSTEROLE  y un subjec        t que es a quien le ponemos el clusterole (CLUSTERROLE Va a tener acceso a todo los namespace)
+
+USERS & GROUPS
+kubernetes nos provee es una api para autenticar usuarios. para generar usuarios lo podemos hacer de diferentes maneras pero la mas utilizada es CERT y para generaralos podermos usar openssl(certificados) el cluster tiene un CA(Certificate Authorization que sirve para firmar certificados).
+1) generamos el cert
+2) obtenemos el CSR (lo que coloquemos en CN(common name) sera nuestro usuario, y en organization va hacer el grupo del usuario)
+3) fimar el CSR con el CA
+
+
+kubectl get roles
+kubectl get rolebinding
+
+
+
+
+
+
+
+
+
+
+
 
 ***********************************************************VOLUMENES**********************************************************
 ES DONDE PONEMOS ARCHIVOS O DATOS QUE QUEREMOS QUE PERSISTAN ASI EL POD MUERA ASI LO PODRA SEGUIR USANDO OTRO POD

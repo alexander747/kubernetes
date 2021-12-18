@@ -1,0 +1,25 @@
+#creamos un rol
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: cluster-rol #
+rules: #reglas para el rol
+  - apiGroups: [""] # va vacio
+    resources: ["services"] #queremos dar acceso solo a los pods
+    verbs: ["*"] #puede hacer todo
+
+---
+apiVersion: rbac.authorization.k8s.io/v1 #este es el rolbinding
+kind: ClusterRoleBinding
+metadata:
+  name: cluster-read-pods #nombre de este rolbinding
+subjects: #a quien le vamos a aplicar el rolbinding es a un grupo
+  - kind: Group
+    name: dev
+    apiGroup: rbac.authorization.k8s.io
+roleRef: #el usuario le vamos a enlazar el siguiente rol
+  kind: ClusterRole #tipo rol
+  name: cluster-rol # nombre del rol que creamos arriba
+  apiGroup: rbac.authorization.k8s.io
+
+  #los clusterRole no utilizan namespace porque se aplican a todo el cluster

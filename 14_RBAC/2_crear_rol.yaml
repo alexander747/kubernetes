@@ -1,0 +1,12 @@
+#creamos un rol
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  namespace: default #este rol solo va a servir para el ns default
+  name: pod-reader #nommbre del rol que queramos
+rules: #reglas para el rol
+  - apiGroups: [""] # va vacio
+    resources: ["pods"] #queremos dar acceso solo a los pods
+    verbs: ["get", "watch", "list"] #get para leer, list para listar y watch para observar
+
+#para traer los roles kubectl get roles

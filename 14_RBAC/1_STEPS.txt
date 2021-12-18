@@ -1,0 +1,33 @@
+## RBAC VERIFICAR SI ESTA ACTIVADO EN EL CLUSTER SI NO EJECUTAR
+kubectl cluster-info dump | grep authorization-mode
+minikube start --vm-driver=none --extra-config=apiserver.authorization-mode=RBAC
+
+para ver con que usuario estamos logueados o contexto 
+kubectl config get-contexts
+kubectl config use-context nombredelcontextoausar
+
+
+##Create keys and sign 
+openssl genrsa -out eder.key 2048
+#CN nombre de usuario y O es el grupo 
+openssl req -new -key eder.key -out eder.csr -subj "/CN=eder/O=dev"
+
+#como administrador del cluster puedo hacer un kubectl config view y aparecera donde esta ubicado nuestro certificate-authority para firmar el csr del usuario anterior y que es el que va en la siguiente linea la ruta /home/witchtrap/.minikube/ca.crt
+#firmamos el certificado
+sudo openssl x509 -req -in eder.csr -CA /home/witchtrap/.minikube/ca.crt -CAkey /home/witchtrap/.minikube/ca.key -CAcreateserial -out eder.crt -days 500
+
+#veficamos que firmamos bien el archivo creado
+openssl x509 -in eder.crt -noout -text
+
+##Isolated env (el archivo anterior se lo debemos enviar al usuario para que el siga la configuracion desde su maquina) solo ejecutar si queremos probar con un docker si no seguir al siguiente bloque
+kubectl config view | grep server
+docker run --rm -ti -v $PWD:/test -w /test -v /home/witchtrap/.minikube/ca.crt:/ca.crt -v /usr/bin/kubectl:/usr/bin/kubectl alpine sh
+
+##Configure kubectl for user para sacar la ip es con el comando kubectl cluster-info
+kubectl config set-cluster minikube --server=https://192.168.49.2:8443 --certificate-authority=/ca.crt
+kubectl config set-credentials eder --client-certificate=eder.crt --client-key=eder.key
+kubectl config set-context eder --cluster=minikube --user=eder
+kubectl config use-context eder
+
+kubectl config get-contexts
+kubectl config use-context nombredelcontextoausar

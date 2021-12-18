@@ -1,0 +1,27 @@
+#creamos un rol
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  namespace: default #este rol solo va a servir para el ns default
+  name: pod-reader #nommbre del rol que queramos
+rules: #reglas para el rol
+  - apiGroups: [""] # va vacio
+    resources: ["pods"] #queremos dar acceso solo a los pods
+    verbs: ["get", "watch", "list"] #get para leer, list para listar y watch para observar
+
+---
+apiVersion: rbac.authorization.k8s.io/v1 #este es el rolbinding
+kind: RoleBinding
+metadata:
+  name: read-pods #nombre de este rolbinding
+  namespace: default #a que namespace se va aplicar este rolbinding
+subjects: #a quien le vamos a aplicar el rolbinding es a un User de nombre
+  - kind: User
+    name: eder
+    apiGroup: rbac.authorization.k8s.io
+roleRef: #el usuario le vamos a enlazar el siguiente rol
+  kind: Role #tipo rol
+  name: pod-reader # nombre del rol que creamos arriba
+  apiGroup: rbac.authorization.k8s.io
+
+  #kubectl get rolebinding
