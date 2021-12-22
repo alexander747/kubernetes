@@ -1,0 +1,61 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: my-service-account
+#con esto ya se le asocia un token automaticamente
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata: #metadata del deployment
+  annotations:
+    kubernetes.io/change-cause: "se creo este primer deployment" #causa del porque se depliega este deploy esto aparecera con el comando de rollout history
+  name: deployment-test-con-service-account
+  labels:
+    app: front
+spec: #spect del replicaset
+  revisionHistoryLimit: 3 # cuantos replicas set de history queremos
+  replicas: 1
+  selector: #selector que el replica set va a buscar en los pods
+    matchLabels:
+      app: front
+  template: #template del pod
+    metadata:
+      labels:
+        app: front
+    spec: #container
+      containers:
+        - name: nginx
+          imagePullPolicy: IfNotPresent #busca en la imagenes locales primero si no la descarga
+          image: nginx:alpine
+          ports:
+            - containerPort: 8080
+      serviceAccountName: my-service-account # AQUI SE ASOCIA EL SERVICEACCOUNT AL DEPLOYMENT POR ENDE LOS PODS CREADOS YA TIENE EL SERVICE ACCOUNT ASOCIADO Y DENTRO DEL POD ESTA MONTADO EL TOKEN DEL SERVICE ACCOUNT CON EL CUAL SE PUEDEN HACER PETICIONES A OTROS PODS PERO HASTA EL MOMENTO ESTE TOKEN NO TENDRIA ALGUNOS PERMISOS PARA HACER ALGUNOS LLAMADOS
+---
+#creamos un rol
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  namespace: default #este rol solo va a servir para el ns default
+  name: sa-reader #nommbre del rol que queramos
+rules: #reglas para el rol
+  - apiGroups: [""] # va vacio porque para pods es vacio esto se ve con kubectl get resources en APIGROUP
+    resources: ["pods"] #queremos dar acceso solo a los pods
+    verbs: ["get", "watch", "list"] #get para leer, list para listar y watch para observar
+
+---
+apiVersion: rbac.authorization.k8s.io/v1 #este es el rolbinding
+kind: RoleBinding
+metadata:
+  name: sa-pods #nombre de este rolbinding
+  namespace: default #a que namespace se va aplicar este rolbinding
+subjects: #a quien le vamos a aplicar el rolbinding YA NO ES A UN USUARIO SI NO A UN SERVICEACCOUNT
+  - kind: ServiceAccount # EL PERMISO SE LO VAMOS A DAR UN SERVICE ACCOUNT
+    name: my-service-account #NOMBRE DEL SERVICIO AL CUAL SE LE APLICARA (ESTA CREADO ARRIBA)
+    apiGroup: "" #IMPORTANTE VA VACIO PORQUE SI EJECUTAMOS kubectl api-resources Y VEMOS EL APIGROUP DE SERVECEACCOUNT ES VACIO
+roleRef: #EL ROL QUE SE LE APLICARA AL SERVICE ACCOUNT QUE ESTAMOS ENLAZANDO
+  kind: Role #tipo rol
+  name: sa-reader # nombre del rol que creamos arriba EL CUAL TIENE LOS PERMISOS PARA EL POD
+  apiGroup: rbac.authorization.k8s.io
+
+  #kubectl get rolebinding

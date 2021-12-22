@@ -10,6 +10,37 @@ kubectl api-versions
 kubectl port-forward svc/front-venta -n venta-digital 8181:8080 para port forward
 
 
+***********************************************************INGRESS**********************************************************
+Define un solo punto de entrada a nuestro cluster y luego aplicando reglas enruta el trafico a distintos servicios. En el ingress describimos las reglas
+que se quieren aplicar 
+
+INGRESS CONTROLLER 
+Es el que aplica las reglas del ingress y es que enruta el trafico. Tambien expone el puerto que va a estar recibiendo el trafico
+Hay 2 ingress controller soportados por kubernetes hasta ahora nginx  y balanceadores de google cloud
+
+
+
+***********************************************************SERVICE ACCOUNTS**********************************************************
+el cluster ya viene con un service account por defecto y lo podemos ver con el siguiente comando. Siempre que creamos un namespace se crea automaticamente un serviceaccount y si describimos este veremos que siempre va estar atado a un token en secrets
+
+se usa para que un pod dentro de nuestro cluster acceda a otros recursos del cluster  ESTO ES LO MAS IMPORTANTE
+
+
+kubectl get sa 
+kubectl get serviceaccount
+kubectl describe sa default
+
+para ver el secret del token 
+kubectl get secret
+
+kubectl get secrets nombredelsecreto -o yaml
+y este es el ca que utilizabamos para firmar 
+
+when i create a pod always this pod is relationated with a service account and this pod has volumes with name of token of service account
+siempre que se crea un pod se relaciona con un service account y ademas se monta dentro del pod los secretos
+
+
+
 
 *********************************************************** RBAC ROLES**********************************************************
 ROLE VS CLUSTERROLE
@@ -28,17 +59,6 @@ kubernetes nos provee es una api para autenticar usuarios. para generar usuarios
 
 kubectl get roles
 kubectl get rolebinding
-
-
-
-
-
-
-
-
-
-
-
 
 ***********************************************************VOLUMENES**********************************************************
 ES DONDE PONEMOS ARCHIVOS O DATOS QUE QUEREMOS QUE PERSISTAN ASI EL POD MUERA ASI LO PODRA SEGUIR USANDO OTRO POD
