@@ -8,6 +8,8 @@ kubectl api-resources
 kubectl apply -f archivo.yaml
 kubectl api-versions 
 kubectl port-forward svc/front-venta -n venta-digital 8181:8080 para port forward
+ minikube service nombreservicio  --url -n nombrenamespace   (para ver la url donde podemos consultar la pagina)
+
 
 
 ***********************************************************INGRESS**********************************************************

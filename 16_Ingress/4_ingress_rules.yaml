@@ -1,0 +1,19 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ingress-test
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  rules: #reglas
+    - http:
+        paths:
+          - path: /appv1 # cuando sea este el path
+            pathType: Prefix
+            backend:
+              service:
+                name: app-v1 #redirigira a este servicio que cramos en el yaml 3
+                port:
+                  number: 8080 #este es el puerto que el servicio creado anteriormente este escuchando
+
+#reglas segun el path

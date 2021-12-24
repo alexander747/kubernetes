@@ -1,0 +1,15 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ingress-test
+spec:
+  rules:
+    - host: "app1.mydomain.com" #si este es el host si se tiene otro host se puede duplicar la regla ya que es un array
+      http:
+        paths:
+          backend:
+            service:
+              name: app-v1 #nombre del servicio que va a servir y puerto
+              port:
+                number: 8080
+#INGRESS CONTROLER SEGUN HOST

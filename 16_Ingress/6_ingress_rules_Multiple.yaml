@@ -1,0 +1,34 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: nombre-del-ingress #nommbre del ingres que quiera
+spec:
+  rules:
+    - host: foo.bar.com #host 1
+      http:
+        paths:
+          - path: /foo #path a consumir del host 1
+            pathType: Prefix
+            backend:
+              service:
+                name: service1
+                port:
+                  number: 4200
+          - path: /bar #path a consumir del host 1
+            pathType: Prefix
+            backend:
+              service:
+                name: service2
+                port:
+                  number: 8080
+    - host: eder.bar.com #host 2
+      http:
+        paths:
+          - path: /papas #path a consumir del host 2
+            pathType: Prefix
+            backend:
+              service:
+                name: service2
+                port:
+                  number: 8080
+#En este ejemplo tenemos dos dominios que diferentes que estan apuntando a servicios diferentes y con paths diferentes
