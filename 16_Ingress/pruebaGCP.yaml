@@ -1,0 +1,70 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata: #metadata del deployment
+  annotations:
+    kubernetes.io/change-cause: "se creo este primer deployment" #causa del porque se depliega este deploy esto aparecera con el comando de rollout history
+  name: ingress-deployment
+  labels:
+    app: front
+spec: #spect del replicaset
+  revisionHistoryLimit: 3 # cuantos replicas set de history queremos
+  replicas: 2
+  selector: #selector que el replica set va a buscar en los pods
+    matchLabels:
+      app: front
+  template: #template del pod
+    metadata:
+      labels:
+        app: front
+    spec: #container
+      containers:
+        - name: nginx
+          imagePullPolicy: IfNotPresent #busca en la imagenes locales primero si no la descarga
+          image: nginx:alpine
+          # ports:
+          #   - containerPort: 80
+          command:
+            [
+              "sh",
+              "-c",
+              "echo VERSION 1.0 desde $HOSTNAME > /usr/share/nginx/html/index.html && nginx -g 'daemon off;'",
+            ]
+
+---
+apiVersion: v1 #version del servicio
+kind: Service #tipo Service
+metadata: #metadata del service
+  name: app-v1
+  labels:
+    app: front
+spec:
+  type: ClusterIP #tipo de servicio que tendra el servicio (ClusterIP solo accesible en el cluster)
+  selector: #selector para buscar pods
+    app: front
+  ports:
+    - protocol: TCP #protocolo de escucha
+      port: 80 #puerto en el que el servicio va estar escuchando
+      targetPort: 80 #puerto del pod que va a buscar a consumir
+
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ingress
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    nginx.ingress.kubernetes.io/use-regex: "true"
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  rules: #reglas
+    - http:
+        paths:
+          - path: / # cuando sea este el path
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: app-v1 #redirigira a este servicio que cramos en el yaml 3
+                port:
+                  number: 80 #este es el puerto que el servicio creado anteriormente este escuchando
+
+#reglas segun el path

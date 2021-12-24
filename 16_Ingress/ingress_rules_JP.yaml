@@ -1,0 +1,59 @@
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: ingress-cotizador-masivo
+  namespace: cotizador-masivo-qa
+  annotations:
+    # use the shared ingress-nginx
+    kubernetes.io/ingress.class: "nginx"
+    nginx.ingress.kubernetes.io/use-regex: "true"
+    cert-manager.io/issuer: "letsencrypt-cotizador-masivo-qa"
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  rules:
+    - host: cotizadormasivo-qa.pvdigital.cl
+      http:
+        paths:
+          - backend:
+              serviceName: front-cotizador-masivo
+              servicePort: 8080
+            path: /
+            pathType: ImplementationSpecific
+          - backend:
+              serviceName: front-cotizador-masivo
+              servicePort: 8080
+            path: /login
+            pathType: ImplementationSpecific
+          - backend:
+              serviceName: front-cotizador-masivo
+              servicePort: 8080
+            path: /cotizador/*
+            pathType: ImplementationSpecific
+  tls:
+    - hosts:
+        - cotizadormasivo-qa.pvdigital.cl
+      secretName: tls-manager-cotizadormasivo-v1
+#spec:
+#  tls:
+#    - hosts:
+#      - cotizadormasivo-test.pvdigital.cl
+#      secretName: tls-manager-cotizadormasivo-v1
+#  rules:
+#    - host: cotizadormasivo-test.pvdigital.cl
+#      http:
+#        paths:
+#        - backend:
+#          serviceName: front-cotizador-masivo
+#          servicePort: 8080
+#        path: /
+#        pathType: ImplementationSpecific
+#        - backend:
+#          serviceName: front-cotizador-masivo
+#          servicePort: 8080
+#        path: /login
+#        pathType: ImplementationSpecific
+#        - backend:
+#          serviceName: front-cotizador-masivo
+#          servicePort: 8080
+#        path: /cotizador/*
+#        pathType: ImplementationSpecific

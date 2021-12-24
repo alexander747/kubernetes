@@ -1,8 +1,10 @@
+#este es el servicio para nuestro ingressController
+
 apiVersion: v1 #version del servicio
 kind: Service #tipo Service
 metadata: #metadata del service
   name: ingress-nginx
-  namespace: ingress-nginx
+  namespace: ingress-nginx #NOMBRE DE NUESTRO INGRESSCONTROLLER
   labels:
     app.kubernetes.io/name: ingress-nginx
     app.kubernetes.io/part-of: ingress-nginx
